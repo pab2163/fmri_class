@@ -1,37 +1,33 @@
-# Python Practical: Scripts, the Terminal, and Nilearn
+# Python Practical: Running Scripts from the Terminal, and Nilearn
 
 ## Andy's Brain Book Python Tutorial
 **First:** Go through all 5 sections of the ["Python for Neuroimagers" tutorial from Andy's Brain Book"](https://andysbrainbook.readthedocs.io/en/latest/PythonForNeuroimagers/PythonForNeuroimagers_Overview.html#what-is-python).
 
 Note, it's a good idea to read parts 1 and 5, but this practical will mostly focus on the content from parts 2-4 using python scripts. We'll be using Jupyter Notebooks (covered in part 1) too soon!
 
-**Goal:** Write a series of short Python scripts in a text editor and run
-each one from the command line, building up to using `nilearn` to explore a
-neuroimaging package — without needing any of your own scan data.
+### Goals for this activity 
+Write a series of short Python scripts in a text editor and run
+each one from the command line, building up to using `nilearn`. 
 
 **Why separate scripts?** Each part below is its own `.py` file. Write one,
 run it, and get it working *before* moving on to the next. This makes it
-much easier to tell exactly where a problem is if something goes wrong —
+much easier to tell exactly where a problem is if something goes wrong, as 
 you're only ever troubleshooting one small piece at a time, instead of
-hunting through one long script for a bug.
-
-**What to submit:** four `.py` files (`part1.py` through `part4.py`), a
-screenshot of each one running successfully in your terminal, and the image
-file `part4.py` generates.
+hunting through one long script for a bug. 
 
 ---
 
 ## Setup
 
 No new Python installation is needed for this assignment — you'll use the
-`nilearn` conda environment we set up in class, which already has `nilearn`
+`fmri_class` conda environment we set up in class, which already has `nilearn`
 and its dependencies installed.
 
 1. Open a terminal and activate that environment:
    ```bash
-   conda activate nilearn
+   conda activate fmri_class
    ```
-   Your terminal prompt should now show `(nilearn)` at the start of the
+   Your terminal prompt should now show `(fmri_class)` at the start of the
    line. If `conda activate` isn't recognized, run `conda init` for your
    shell as instructed, restart your terminal, and try again.
 2. Pick an editor:
@@ -159,3 +155,7 @@ correctly, and that `atlas_plot.png` appears in the same folder and opens to
 show a labeled brain atlas image. If something fails, read the last line of
 the error message first — it usually names the line number and the type of
 problem (`NameError`, `IndentationError`, `TypeError`, etc.).
+
+## What to turn in
+
+Submit each of your 4 python scripts (`part1.py`, `part2.py`, `part3.py`, and `part4.py`) and your plot of the Harvard-Oxford Cortical atlas (`atlas_plot.png`) on Canvas. 

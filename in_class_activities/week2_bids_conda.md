@@ -149,30 +149,32 @@ conda --version
 Create an environment specifically for this class, using Python 3.11:
 
 ```bash
-conda create -n bids-class python=3.11
+conda create -n fmri_class python=3.11
 ```
+
+This step may take a while to set up the enviornment. 
 
 Activate it:
 
 ```bash
-conda activate bids-class
+conda activate fmri_class
 ```
 
-Your terminal prompt should now show `(bids-class)` at the start of the line, confirming you're inside the environment.
+Your terminal prompt should now show `(fmri_class)` at the start of the line, confirming you're inside the environment.
 
 ### Step 3: Install nilearn
 
 Inside your activated environment, install **nilearn**, a Python library for working with fMRI/neuroimaging data (we'll use it in future assignments):
 
 ```bash
-pip install nilearn
+pip install nilearn matplotlib
 ```
 
-This will pull in several dependencies (numpy, scipy, scikit-learn, nibabel, etc.).
+This will pull in several dependencies (numpy, scipy, scikit-learn, nibabel, etc.). This command also installs the graphic library matplotlib
 
 ### Step 4: Verify the installation
 
-There are a few different ways to confirm nilearn is actually installed and working inside your `bids-class` environment. Try all three:
+There are a few different ways to confirm nilearn is actually installed and working inside your `fmri_class` environment. Try all three:
 
 **a) Ask conda what's in the environment:**
 
