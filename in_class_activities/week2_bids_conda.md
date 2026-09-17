@@ -164,7 +164,7 @@ Your terminal prompt should now show `(fmri_class)` at the start of the line, co
 
 ### Step 3: Install nilearn
 
-Inside your activated environment, install **nilearn**, a Python library for working with fMRI/neuroimaging data (we'll use it in future assignments):
+Inside your activated environment, install [**nilearn**](https://nilearn.github.io/stable/index.html), a Python library for working with fMRI/neuroimaging data (we'll use it in future assignments):
 
 ```bash
 pip install nilearn matplotlib
