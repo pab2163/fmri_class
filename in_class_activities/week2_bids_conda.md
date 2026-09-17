@@ -179,7 +179,7 @@ There are a few different ways to confirm nilearn is actually installed and work
 **a) Ask conda what's in the environment:**
 
 ```bash
-conda list nilearn
+conda list fmri_class
 ```
 
 This lists any package matching "nilearn" in your active environment, along with its version number.
@@ -187,7 +187,7 @@ This lists any package matching "nilearn" in your active environment, along with
 **b) Ask pip directly:**
 
 ```bash
-pip show nilearn
+pip show fmri_class
 ```
 
 This shows metadata about the installed package — version, install location, and its dependencies.
