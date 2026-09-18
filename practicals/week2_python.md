@@ -67,9 +67,12 @@ It should look something like this:
 ```python
 tr=0.5
 n_volumes=100
-scan_id=31
+scan_id='sub-031'
 is_resting_state=False
 print(type(tr))
+print(type(n_volumes))
+print(type(scan_id))
+print(type(is_resting_state))
 ```
 
 Next, build a dictionary called `scan_params` with keys `"TR"`,
