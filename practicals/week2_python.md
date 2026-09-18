@@ -62,6 +62,16 @@ integer), a scan ID (`scan_id`, a string), and whether it's resting-state
 (`is_resting_state`, a boolean). Print each variable's `type()` to confirm
 Python is treating it the way you expect.
 
+It should look something like this:
+
+```python
+tr=0.5
+n_volumes=100
+scan_id=31
+is_resting_state=False
+print(type(tr))
+```
+
 Next, build a dictionary called `scan_params` with keys `"TR"`,
 `"voxel_dimensions"`, and `"volumes"` — the same pattern used for
 `fMRI_Image` in Tutorial #2. Add a new key (`"orientation"`), overwrite the
