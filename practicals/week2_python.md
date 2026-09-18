@@ -40,7 +40,7 @@ and its dependencies installed.
    - **Sublime Text:** write your code there, but run it in a *separate*
      terminal window with the `nilearn` environment activated — Sublime
      doesn't execute Python for you.
-3. Sanity check: save a one-line file (`print("ready")`) as `hello.py`, `cd`
+3. Initial check: save a one-line file (`print("ready")`) as `hello.py`, `cd`
    into its folder in your terminal (with `nilearn` still activated), and
    run:
    ```bash
