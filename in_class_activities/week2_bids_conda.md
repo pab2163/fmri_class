@@ -39,7 +39,7 @@ For this assignment, everyone will use the same dataset so we can compare notes:
 
 **Dataset page:** https://openneuro.org/datasets/ds000114
 
-The full dataset is about 4.3 GB (10 subjects × 2 sessions). Download the whole thing from OpenNeuro and put it in your datasets folder.
+The full dataset is about 4.3 GB (10 subjects × 2 sessions). Download the whole thing from OpenNeuro and put it in your datasets folder. **Note**: you should download this using the "Download button" (should show up in Chrome/Firefox), not via Github. Github will alias the files rather than downloading in full.
 
 The file tree should look something like this:
 
@@ -179,7 +179,7 @@ There are a few different ways to confirm nilearn is actually installed and work
 **a) Ask conda what's in the environment:**
 
 ```bash
-conda list fmri_class
+conda list -n fmri_class
 ```
 
 This lists any package matching "nilearn" in your active environment, along with its version number.
@@ -187,7 +187,7 @@ This lists any package matching "nilearn" in your active environment, along with
 **b) Ask pip directly:**
 
 ```bash
-pip show fmri_class
+pip show nilearn
 ```
 
 This shows metadata about the installed package — version, install location, and its dependencies.

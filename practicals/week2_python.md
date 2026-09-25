@@ -40,7 +40,7 @@ and its dependencies installed.
    - **Sublime Text:** write your code there, but run it in a *separate*
      terminal window with the `nilearn` environment activated — Sublime
      doesn't execute Python for you.
-3. Sanity check: save a one-line file (`print("ready")`) as `hello.py`, `cd`
+3. Initial check: save a one-line file (`print("ready")`) as `hello.py`, `cd`
    into its folder in your terminal (with `nilearn` still activated), and
    run:
    ```bash
@@ -61,6 +61,19 @@ repetition time (`tr`, a float), a number of volumes (`n_volumes`, an
 integer), a scan ID (`scan_id`, a string), and whether it's resting-state
 (`is_resting_state`, a boolean). Print each variable's `type()` to confirm
 Python is treating it the way you expect.
+
+It should look something like this:
+
+```python
+tr=0.5
+n_volumes=100
+scan_id='sub-031'
+is_resting_state=False
+print(type(tr))
+print(type(n_volumes))
+print(type(scan_id))
+print(type(is_resting_state))
+```
 
 Next, build a dictionary called `scan_params` with keys `"TR"`,
 `"voxel_dimensions"`, and `"volumes"` — the same pattern used for
