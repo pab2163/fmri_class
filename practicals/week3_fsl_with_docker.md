@@ -22,7 +22,7 @@ docker images
 ```
 You should see `brainlife/fsl` listed.
 
-**Note:** this is a lightweight, command-line-only build of FSL. It includes core tools like `bet`, `flirt`, `fnirt`, `fslmaths`, `fslhd`, `fslmeants`, `feat`, and `fslstats`, but not the FSLeyes graphical viewer. You'll still want to use the non-Docker FSL you have installed for viewing images in [FSLeyes](https://pages.fmrib.ox.ac.uk/fsl/docs/utilities/fsleyes/).
+**Note:** this is a lightweight, command-line-only build of FSL. It includes core tools like `bet`, `flirt`, `fnirt`, `fslmaths`, `fslhd`, `fslmeants`, `feat`, and `fslstats`, but not the FSLeyes graphical viewer. You'll still want to use the non-Docker FSL you have installed for viewing images in FSLeyes.
 
 FSL is a big piece of software with a lot of tools beyond what we'll touch today. The [FSL documentation](https://fsl.fmrib.ox.ac.uk/fsl/docs/) is the best starting point if you want to see the full picture, and I encourage you to browse it at some point this semester, not just when you're stuck.
 
@@ -107,7 +107,7 @@ You should see a bunch of bold data files files now (as well as an events tsv fi
 
 Now, still inside the container and inside that `func` folder, run these on your `_bold.nii.gz` file.
 
-First, `fslhd` prints the complete NIfTI header for an image, every field FSL knows about it. `fslhd`, along with the other command-line tools in this practical, is documented in FSL's [FSLUTILS reference](https://pages.fmrib.ox.ac.uk/fsl/docs/utilities/fslutils/), which we'd encourage you to read through rather than treating this practical as the whole story. Run it on your BOLD file:
+First, `fslhd` prints the complete NIfTI header for an image, every field FSL knows about it. `fslhd`, along with the other command-line tools in this practical, is documented in FSL's [FSLUTILS reference](https://web.mit.edu/fsl_v5.0.10/fsl/doc/wiki/Fslutils.html), which we'd encourage you to read through rather than treating this practical as the whole story. Run it on your BOLD file:
 ```
 fslhd sub-01_ses-test_task-overtwordrepetition_bold.nii.gz
 ```
@@ -135,7 +135,7 @@ Let's create two new files from your BOLD scan and confirm they land back on you
 
 ### A mean image across time
 
-`fslmaths` is FSL's general-purpose, voxelwise image calculator. It can add, subtract, threshold, smooth, and compute all kinds of statistics on an image, one voxel at a time. One thing it can do is collapse a 4D image (with a time dimension) down into a single 3D image by averaging across time, using the `-Tmean` flag. `fslmaths` has dozens of other flags documented in the [FSLUTILS reference](https://pages.fmrib.ox.ac.uk/fsl/docs/utilities/fslutils/); this practical only scratches the surface.
+`fslmaths` is FSL's general-purpose, voxelwise image calculator. It can add, subtract, threshold, smooth, and compute all kinds of statistics on an image, one voxel at a time. One thing it can do is collapse a 4D image (with a time dimension) down into a single 3D image by averaging across time, using the `-Tmean` flag. `fslmaths` has dozens of other flags documented in the [FSLUTILS reference](https://web.mit.edu/fsl_v5.0.10/fsl/doc/wiki/Fslutils.html); this practical only scratches the surface.
 
 Compute the mean BOLD signal at every voxel, averaged across all timepoints, and save it to your mounted output folder:
 ```
