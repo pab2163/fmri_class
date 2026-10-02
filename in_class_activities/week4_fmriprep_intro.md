@@ -1,4 +1,4 @@
-# In-Class Practical: Understanding fMRIPrep's Inputs and Outputs
+# In-Class Activity: Understanding fMRIPrep's Inputs and Outputs
 
 
 ## How to submit this
@@ -40,7 +40,7 @@ This page shows the actual `anat/` and `func/` output listings fMRIPrep produced
 
 ## Part 3: Input → output mapping
 
-Using the combination of the Flanker dataset on OpenNeuro and what [Tutorial #3](https://andysbrainbook.readthedocs.io/en/latest/OpenScience/OS/fMRIPrep_Demo_3_ExaminingPreprocData.html) showed you, answer the following:
+Using the combination of the Flanker dataset on OpenNeuro and what [Andy's Brain Book Tutorial #3](https://andysbrainbook.readthedocs.io/en/latest/OpenScience/OS/fMRIPrep_Demo_3_ExaminingPreprocData.html) showed you, answer the following:
 
 3. Tutorial #3 gives the example file `sub-08_space-MNI152NLin2009cAsym_desc-preproc_T1w.nii.gz`. Which raw input file was this ultimately derived from, and what does the `space-MNI152NLin2009cAsym` part of the name tell you about it?
 4. Tutorial #3 also mentions `sub-08_space-MNI152NLin2009cAsym_label-CSF_probseg.nii.gz`. What does this file represent, and how is a "probabilistic segmentation" conceptually different from a binary brain mask?
@@ -53,7 +53,7 @@ Using the combination of the Flanker dataset on OpenNeuro and what [Tutorial #3]
 
 ## Part 4: Finding your way around the HTML report
 
-Still using [Tutorial #3](https://andysbrainbook.readthedocs.io/en/latest/OpenScience/OS/fMRIPrep_Demo_3_ExaminingPreprocData.html), answer the following. These questions aren't about whether anything looks *good*; they're about **where** in the report you'd go to find each piece of information:
+Still using [Andy's Brain Book Tutorial #3](https://andysbrainbook.readthedocs.io/en/latest/OpenScience/OS/fMRIPrep_Demo_3_ExaminingPreprocData.html), answer the following. These questions aren't about whether anything looks *good*; they're about **where** in the report you'd go to find each piece of information:
 
 9. Where would you check whether this subject had any processing errors, and why does Tutorial #3 suggest checking there *first*, before looking at anything else?
 10. Where would you confirm how many T1w images and how many functional runs were actually processed for this subject?
