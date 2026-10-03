@@ -1,4 +1,4 @@
-# Practical #3: Preprocessing with fMRIPrep & Inspecting the Outputs
+# Practical #4: Preprocessing with fMRIPrep & Inspecting the Outputs
 
 **Assumes:** Docker Desktop installed and verified (from the FSL practical). You already have the local `ds000114` BIDS folder on your computer, and are comfortable with bind-mounting folders in and out of a container using `-v`.
 
