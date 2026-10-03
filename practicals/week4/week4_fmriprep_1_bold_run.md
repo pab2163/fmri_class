@@ -8,7 +8,7 @@
 
 In the FSL practical, you ran a few commands by hand on `sub-01`'s raw BOLD data: a mean image, a timeseries of whole-brain means, a tSNR map. That's a reasonable way to get a first look at data quality, but a "real" preprocessing pipeline needs to do a lot more before an image is ready for analysis: correct for head motion, correct for susceptibility-related image distortion, align the functional data to the anatomical scan, warp everything into a standard template space, and generate a battery of numbers ("confounds") describing how noisy each volume is.
 
-You *could* chain together individual FSL, ANTs, and FreeSurfer commands by hand to do all of this yourself — people used to, and some still do for custom pipelines. **fMRIPrep** exists because that approach is slow to build, easy to get subtly wrong, and hard to compare across labs that each wire their own version of it together differently. fMRIPrep packages a specific, carefully validated sequence of steps — pulling in FSL, ANTs, FreeSurfer, and AFNI tools under the hood — into one command that runs the same way on anyone's data. It produces a standardized set of derivative files plus an HTML quality-control report for every subject. The field has genuinely coalesced around fMRIPrep as something close to a shared standard for a large chunk of preprocessing, which means a growing number of papers, courses, and labs you'll interact with are already using it (or something that assumes its outputs) rather than each building preprocessing from scratch. Today you'll run it, in a container, on the same subject you've already gotten to know (`sub-01`), and then spend most of the practical learning to read its outputs.
+You *could* chain together individual FSL, ANTs, and FreeSurfer commands by hand to do all of this yourself. People used to, and some still do for custom pipelines. **fMRIPrep** exists because that approach is slow to build, easy to get subtly wrong, and hard to compare across labs that each wire their own version of it together differently. fMRIPrep packages a specific, carefully validated sequence of steps (pulling in FSL, ANTs, FreeSurfer, and AFNI tools under the hood) into one command that runs the same way on anyone's data. It produces a standardized set of derivative files plus an HTML quality-control report for every subject. The field has  coalesced around fMRIPrep as something close to a shared standard for a large chunk of preprocessing, which means a growing number of papers, courses, and labs you'll interact with are already using it (or something that assumes its outputs) rather than each building preprocessing from scratch. Today you'll run it, in a container, on the same subject you've already gotten to know (`sub-01`), and then spend most of the practical learning to read its outputs.
 
 **The full fMRIPrep documentation lives at <https://fmriprep.org/en/stable/>.** It's good documentation, and worth getting comfortable navigating on your own (espeecially because you'll probably need to use different flags to customize a little bit depending on the project). Specific pages are linked below where relevant, but you're encouraged to read around them rather than treating the links as the only parts that matter.
 
@@ -117,11 +117,11 @@ The three **positional** arguments are always in this order: where your BIDS dat
 
 By default, fMRIPrep tries to keep going even after one part of the pipeline fails, since many steps (different runs, different stages) are independent of each other; it then reports everything that went wrong together, all at once, at the end. `--stop-on-first-crash` overrides that: the whole run halts the instant anything fails, rather than continuing on and possibly burying a real problem somewhere inside a long end-of-run summary you might skim past.
 
-The trade-off is real: one failure stops the entire run, even unrelated steps that would otherwise have finished fine. For a real multi-subject study, that might be more disruptive than it's worth. But for a single-subject learning exercise like this one, where the goal is to notice and understand problems as they happen rather than discover them later, catching a failure immediately and unambiguously is worth more than letting the run limp to a possibly-incomplete finish. If you're ever being extra careful about not missing a hidden error, this flag is a reasonable one to reach for even outside a class setting.
+The tradeoff with this: one failure stops the entire run, even unrelated steps that would otherwise have finished fine. For a real multi-subject study, that might be more disruptive than it's worth. But for a single-subject learning exercise like this one, where the goal is to notice and understand problems as they happen rather than discover them later, catching a failure immediately and unambiguously is worth more than letting the run limp to a possibly-incomplete finish. If you're ever being extra careful about not missing a hidden error, this flag is a reasonable one to reach for even outside a class setting.
 
 ### What `--fs-no-reconall` actually skips, and why we're using it
 
-"`recon-all`" is FreeSurfer's own pipeline for reconstructing the brain's cortical *surface* — a 3D mesh tracing the boundary between gray and white matter, and another tracing the outer edge of the brain, built separately for each hemisphere. This is a different kind of computation from most of the volumetric steps elsewhere in fMRIPrep (motion correction, normalization, etc.): instead of a handful of passes over a 3D grid of voxels, it's an iterative geometric optimization over the whole cortical surface, refined across many stages. That's genuinely slow — `recon-all` alone commonly takes several hours *per subject*, independent of and in addition to everything else fMRIPrep does.
+"`recon-all`" is [FreeSurfer's](https://surfer.nmr.mgh.harvard.edu/fswiki) own pipeline for reconstructing the brain's cortical *surface* — a 3D mesh tracing the boundary between gray and white matter, and another tracing the outer edge of the brain, built separately for each hemisphere. This is a different kind of computation from most of the volumetric steps elsewhere in fMRIPrep (motion correction, normalization, etc.): instead of a handful of passes over a 3D grid of voxels, it's an iterative geometric optimization over the whole cortical surface, refined across many stages. `recon-all` alone commonly takes several hours *per subject*, independent of and in addition to everything else fMRIPrep does.
 
 Those surfaces are valuable — they're what you'd want for cortical thickness measurements, surface-based group analyses, or visualizing results on an inflated cortical mesh instead of a flat slice. But for the purposes of today's practical, which is about learning to run fMRIPrep and read its standard volumetric outputs and QC report, we don't need this. `--fs-no-reconall` skips it, falling back to a faster volumetric-only skull-strip and segmentation instead of the full surface pipeline.
 
@@ -139,9 +139,11 @@ Add this flag to your fMRIPrep launch script
 --session-label test
 ```
 
-This tells fMRIPrep, at the top level, to only process `ses-test` for the requested subject — full stop. It never even considers `ses-retest`, so there's no conflict to run into. You can point this at your full `ds000114/rawdata` folder as-is; no need to build a separate subset copy of the dataset.
+This tells fMRIPrep, at the top level, to only process `ses-test` for the requested subject. It never even considers `ses-retest`, so there's no conflict to run into. You can point this at your full `ds000114/rawdata` folder as-is; no need to build a separate subset copy of the dataset.
 
 ### Add a filter file for the task
+
+**Note:** in many applied cases we might just want to fMRIPrep all of our data at once (e.g., multiple fMRI tasks, resting state data) and we wouldn't need a filter file or set session labels. We're doing that in this assignment to scale down the length of processing and learn how to use these tools.  
 
 `--session-label` narrows things to one session, but `ses-test` alone still has five tasks in it. Use `--bids-filter-file` to narrow what files to process *within* the session you've already selected:
 
@@ -309,7 +311,7 @@ Scroll through it section by section:
 
 ## Part 8: Inspecting the derivative files directly
 
-Look at what actually got written to disk, not just the report:
+Look at what files actually got written out, not just the report. Find the `anat` and `func` outputs within your `fmriprep_outputs` folder:
 ```
 ls /users/yourname/documents/fmri_class/datasets/ds000114/derivatives/fmriprep_outputs/sub-01/anat
 ls /users/yourname/documents/fmri_class/datasets/ds000114/derivatives/fmriprep_outputs/sub-01/func
@@ -331,7 +333,7 @@ plt.ylabel("Framewise displacement (mm)")
 plt.title("sub-01, ses-test, task-overtwordrepetition")
 plt.savefig("fd_plot.png")
 ```
-Compare what you see here to the framewise displacement plot shown in the HTML report for the same run — they should tell the same story.
+Compare what you see here to the framewise displacement plot shown in the HTML report for the same run (e.g., the 'FD' timeseries). They should tell the same story.
 
 ---
 
