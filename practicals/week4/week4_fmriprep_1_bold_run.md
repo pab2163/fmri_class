@@ -143,7 +143,7 @@ This tells fMRIPrep, at the top level, to only process `ses-test` for the reques
 
 ### Add a filter file for the task
 
-`--session-label` narrows things to one session, but `ses-test` alone still has five tasks in it. Use `--bids-filter-file` the way it was originally intended — narrowing *within* the session you've already selected:
+`--session-label` narrows things to one session, but `ses-test` alone still has five tasks in it. Use `--bids-filter-file` to narrow what files to process *within* the session you've already selected:
 
 ```json
 {
@@ -156,7 +156,7 @@ This tells fMRIPrep, at the top level, to only process `ses-test` for the reques
 
 Save this as `bids_filter.json` in your `derivatives/` folder, e.g. `/users/yourname/documents/fmri_class/datasets/ds000114/derivatives/bids_filter.json`.
 
-**This filter-file syntax is documented at <https://fmriprep.org/en/stable/faq.html#how-do-i-select-only-certain-files-to-be-input-to-fmriprep>.** It's worth reading if you want to filter on other entities (e.g., by `run`, `acquisition`, or `direction`) for your own data later — the format follows PyBIDS query syntax, which is more flexible than the single example above shows.
+**This filter-file syntax is documented at <https://fmriprep.org/en/stable/faq.html#how-do-i-select-only-certain-files-to-be-input-to-fmriprep>.** It's worth reading if you want to filter on other entities (e.g., by `run`, `acquisition`, or `direction`) for your own data later. The format follows [PyBIDS query syntax](https://bids-standard.github.io/pybids/examples/pybids_tutorial.html), which is more flexible than the single example above shows.
 
 ---
 
@@ -187,14 +187,16 @@ mkdir -p /users/yourname/documents/fmri_class/datasets/ds000114/derivatives/fmri
 mkdir -p /users/yourname/documents/fmri_class/datasets/ds000114/derivatives/work
 ```
 
-This command is long, and that's exactly the problem: a command this long, typed or pasted straight into your terminal, is easy to mistype, awkward to re-run identically later, and leaves no record anywhere of exactly what you ran. **Instead of running it directly, save it as a bash script.** This is a small habit worth building now — any time a command gets long enough that getting it wrong would be annoying, writing it into a script first is standard practice, not overkill. A script is also, itself, documentation: it's a permanent, exact record of what you actually did, which matters the moment you (or anyone else) needs to reproduce this run or adapt it for another subject.
+This command is long, which makes it difficult to run directly at the command line. **Instead of running it directly, save it as a bash script.** This is a good habbit worth building: any time a command gets long enough that getting it wrong would be annoying, writing it into a script first is standard practice, not overkill. A script is also, itself, documentation: it's a permanent, exact record of what you actually did, which matters the moment you (or anyone else) needs to reproduce this run or adapt it for another subject.
 
 Create a new file called `run_fmriprep_sub-01.sh` in your course folder, with this content:
 
 ```bash
 #!/bin/bash
 
-echo "fMRIPrep run started: $(date)"
+LOGFILE=/users/yourname/documents/fmri_class/datasets/ds000114/derivatives/fmriprep_run.log
+
+echo "fMRIPrep run started: $(date)" | tee "$LOGFILE"
 
 docker run --rm --name fmriprep_sub-01 \
   -v /users/yourname/documents/fmri_class/datasets/ds000114/rawdata:/data:ro \
@@ -213,9 +215,9 @@ docker run --rm --name fmriprep_sub-01 \
   --nthreads 4 --omp-nthreads 4 \
   --work-dir /work \
   --stop-on-first-crash \
-  2>&1 | tee /users/yourname/documents/fmri_class/datasets/ds000114/derivatives/fmriprep_run.log
+  2>&1 | tee -a "$LOGFILE"
 
-echo "fMRIPrep run finished: $(date)"
+echo "fMRIPrep run finished: $(date)" | tee -a "$LOGFILE"
 ```
 
 **Remember to replace every path above** with wherever these folders actually live on your computer — these are examples, not literal commands to copy unedited.
@@ -225,7 +227,7 @@ Run it:
 bash /users/yourname/documents/fmri_class/run_fmriprep_sub-01.sh
 ```
 
-**You'll submit this script at the end of this assignment**, alongside your other materials — see the "What to turn in" section at the very end.
+**You'll submit this script at the end of this assignment**, alongside your other materials (see the "What to turn in" section at the very end).
 
 A few things worth noticing about this command:
 
@@ -344,24 +346,22 @@ Subtract the two to get your actual wall-clock runtime for this one subject, one
 
 **Now do a back-of-the-envelope estimate**, the kind of rough planning math you'll want to get comfortable with before running anything at real study scale:
 
-- If this one run took your measured time, and `ds000114` had, say, 20 subjects instead of 1, how long would processing all of them take **run one at a time, in sequence**, on this same laptop?
-- Real studies are very often 50, 100, or more subjects. At that scale, does "just run it on my laptop overnight" still hold up? What would you actually do instead?
+- If this one run took your measured time, and `ds000114` had, say, 20 participants instead of 1, how long would processing all of them take **run one at a time, in sequence**, on this same laptop?
+- Real studies might have anywhere between tens to tens of thousands (e.g., UK Biobank dataset) of participants. At those scales, does "just run it on my laptop overnight" still hold up? What would you actually do instead?
 - fMRIPrep processes each subject's `participant`-level workflow independently of every other subject's — nothing about `sub-01`'s run depends on `sub-02`'s. What does that independence buy you, if you have access to more than one CPU core, more than one machine, or a shared compute cluster at your institution?
-- This estimate was for one task and one session, with `--fs-no-reconall`. What are the two specific choices you'd need to revisit if you wanted the full `recon-all` surface pipeline, and both sessions, for every subject? Roughly how would you expect that to change your total estimate?
 
-You don't need to produce a polished project plan here, just work through the arithmetic and write down your reasoning — the goal is building the instinct to estimate compute time *before* committing a cluster, a lab server, or your own laptop to a job, rather than finding out the hard way partway through a real dataset.
+You don't a super specific time estimate here, just work through math to approximate the timing. The goal is building the instinct to estimate compute time *before* committing a cluster, a lab server, or your own laptop to a job.
 
 ---
 
 ## Reflection
 
 Write a short reflection (no more than one paragraph). Things you could mention:
+- What did you think about running fMRIPrep in general?
 - Anything that looked off in the brain mask, segmentation, or coregistration panels of your report, and what that might mean for someone analyzing this data downstream.
 - How framewise displacement in your Python plot compares to what the HTML report showed.
-- Now that you've both run FSL commands by hand (previously) and used fMRIPrep to automate a full pipeline (today): what do you gain by doing it by hand? What do you gain from a standardized, automated tool like fMRIPrep? When might you want one approach over the other?
-- We turned off full FreeSurfer surface reconstruction (`--fs-no-reconall`) today purely for time, given how long `recon-all` takes on its own. What kinds of downstream analyses do you think would actually need those surface outputs, and would you leave that flag on or off for your own data?
 - Based on your back-of-the-envelope estimate in Part 9: if you were planning your own study tomorrow, how would knowing this per-subject runtime change how you think about scheduling, hardware, or needing access to a cluster, versus just assuming "preprocessing" is a quick step?
 
 ## What to turn in
 
-Submit on Canvas: your reflection, `run_fmriprep_sub-01.sh` (your bash script from Part 5), `fd_plot.png`, your Part 9 runtime estimate and reasoning, and one screenshot each of the **Anatomical** and **Functional** sections of your subject's HTML report.
+Submit on Canvas: your reflection, `run_fmriprep_sub-01.sh` (your bash script from Part 5), `fd_plot.png`, and your Part 9 runtime estimate and reasoning.
