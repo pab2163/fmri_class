@@ -30,7 +30,7 @@ FSL is a big piece of software with a lot of tools beyond what we'll touch today
 
 ## Part 2: Quick refresher, running the container
 
-This starts an interactive bash shell inside the container. The `--it` flag makes it interactive, so you can run code interactively, rather than just using the container to execute one script.
+This starts an interactive bash shell inside the container. The `-it` flag makes it interactive, so you can run code interactively, rather than just using the container to execute one script.
 
 ```
 docker run --rm -it brainlife/fsl:latest /bin/bash
@@ -201,7 +201,7 @@ tSNR maps are a standard quality-control step in fMRI analysis. Researchers use 
 
 ### Step 1: compute the standard deviation over time
 
-You already computed the mean image (`sub-01_mean_bold.nii.gz`) in Part 5. Now use `fslstats` again to compute the matching standard deviation image, using the `-Tstd` flag, which is the temporal analog of `-Tmean`. Notice we are NOT including the `--it` flag, so this will not be interactive and you will not be put into a terminal "inside" the container.
+You already computed the mean image (`sub-01_mean_bold.nii.gz`) in Part 5. Now use `fslmaths` again to compute the matching standard deviation image, using the `-Tstd` flag, which is the temporal analog of `-Tmean`. Notice we are NOT including the `-it` flag, so this will not be interactive and you will not be put into a terminal "inside" the container.
 
 ```
 docker run --rm \
@@ -210,7 +210,7 @@ docker run --rm \
   brainlife/fsl:latest \
   fslmaths /workspace/bids/sub-01/ses-test/func/sub-01_ses-test_task-overtwordrepetition_bold.nii.gz -Tstd /workspace/out/sub-01_std.nii.gz
 ```
-This produces a 3D image, `sub-01_std.nii.gz`, where each voxel's value is how much that voxel's signal varied across the scan. Make sure this showed up on your output folder on your computer!
+This produces a 3D image, `sub-01_std.nii.gz`, where each voxel's value is how much that voxel's signal varied across the scan. This is an intermediate file you will need to calculate tSNR, but you won't need to actually upload this iamge. Make sure this showed up on your output folder on your computer!
 
 ### Step 2: divide the mean by the standard deviation to get tSNR
 
