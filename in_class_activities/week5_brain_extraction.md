@@ -44,11 +44,11 @@ By the end of this session you should be able to:
 
 ## Part 1: Setup
 
-### 1.1 Make a working folder
+### 1.1 Make a working folder inside your class folder
 
 ```bash
-mkdir -p ~/bet_practical/qc
-cd ~/bet_practical
+mkdir -p [path_to_your_class_folder]/bet_practical/qc
+cd [path_to_your_class_folder]/bet_practical
 cp /path/to/your/bids/sub-01/anat/sub-01_T1w.nii.gz ./T1.nii.gz
 ```
 
