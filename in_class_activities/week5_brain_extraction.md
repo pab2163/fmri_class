@@ -92,7 +92,7 @@ This small wrapper is a convenient pattern for any tool you run from a Docker im
 
 ### 1.3 Look at the raw image
 
-Make a snapshot with `slicer` and count the non-zero voxels in the raw image:
+Make a snapshot with `slicer` from FSL and count the non-zero voxels in the raw image:
 
 ```bash
 bash fsl.sh slicer T1.nii.gz -a qc/00_raw.png
@@ -195,7 +195,7 @@ Each time through the loop, `$f` takes the next value in the list, so the same t
 
 ### 4.2 Check in FSLeyes and choose
 
-Open the original image with all three sweep masks loaded:
+Open the original image with all three masks loaded:
 
 ```bash
 fsleyes T1.nii.gz \
@@ -210,8 +210,9 @@ Toggle the masks on and off to compare them. Scroll through all three planes, pa
 - the orbitofrontal cortex above the eyes
 - the inferior temporal lobes
 - the cerebellum
+- how much neck and skull are there
 
-Fill in this table:
+Copy this table to a document and fill it in
 
 | Run | Settings | Non-zero voxels | Brain lost? (where) | Non-brain kept? (where) |
 |---|---|---|---|---|
@@ -250,7 +251,7 @@ To plug in your own mask, you would save it as `sub-01/anat/sub-01_desc-brain_ma
 
 In groups of three or four, discuss the questions below. Be ready to share one answer with the class.
 
-1. **When does the default struggle?** Describe a dataset where fMRIPrep's default skull stripping might fail. Consider children, older adults with atrophy, lesions or tumors, unusual contrasts, or heavy motion.
+1. **When would the default struggle?** Describe a dataset where fMRIPrep's default skull stripping might fail. Consider children, older adults with atrophy, lesions or tumors, unusual contrasts, or heavy motion.
 2. **Change the template or replace the mask?** For a study of 6-year-olds, would you change `--skull-strip-template` to a better-matched template, or tune masks outside fMRIPrep and supply them through `--derivatives`? Weigh time, reproducibility, and how clearly you could describe each in a methods section.
 3. **Tuning outside the pipeline.** What do you gain by tuning a skull strip yourself and plugging it in? What new risks does it bring? (Think about grid alignment, using consistent settings for every participant, and whether someone else could reproduce your work.)
 4. **Scaling up.** Tuning one subject took a good part of this session. Your study has 300. How would you keep quality high without tuning every scan by hand?
@@ -262,7 +263,7 @@ In groups of three or four, discuss the questions below. Be ready to share one a
 Submit two files:
 
 1. **`fsl.sh`** from Part 1.
-2. **`lastname_bet_practical.md`**, a single markdown document containing:
+2. A single document containing:
    - **Part 4:** your completed table and your one- or two-sentence justification for the mask you chose as best.
    - **Part 6:** a response to each of the four discussion questions. One sentence each is enough.
 
