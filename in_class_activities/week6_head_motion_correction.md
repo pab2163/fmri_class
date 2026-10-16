@@ -350,7 +350,7 @@ A voxel in the brain should have a fairly constant baseline signal (the BOLD flu
 
 ### 5.2 Run the script
 
-The script `tsnr_compare.py` is provided with this practical. It:
+The script [tsnr_compare.py](tsnr_compare.py) is provided with this practical. It:
 
 1. loads the original and motion-corrected 4D images,
 2. computes tSNR maps for both,
@@ -358,7 +358,7 @@ The script `tsnr_compare.py` is provided with this practical. It:
 4. saves all three maps as NIfTI files, plus prints a short summary.
 
 
-Then run:
+Download it to your class folder and run:
 
 ```bash
 python tsnr_compare.py \
