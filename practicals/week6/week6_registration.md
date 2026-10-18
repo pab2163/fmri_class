@@ -72,8 +72,8 @@ By the end of this assignment you should be able to:
 ### Prerequisites
 
 - FSL installed
-- [FSLeyes](https://open.win.ox.ac.uk/pages/fsl/fsleyes/fsleyes/userdoc/) available (`fsleyes --version`)
-- Familiarity with BIDS layout [`bet`](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/BET) from prior assignments
+- FSLeyes available (`fsleyes --version`)
+- Familiarity with BIDS layout and the `bet` tool for brain extraction
 - The `ds000114` BIDS dataset from prior assignments (`ds000114/rawdata`)
 
 > Note: you *can* use your fMRIPrep Docker image to run the FSL commands in this practical (the image includes FSL). Start a shell in the container with your course folder mounted **at the same path inside the container**, so the paths in your scripts work unchanged:
@@ -118,11 +118,11 @@ To get more of a visual feel for what affine transformations are, check out the 
 
 ### Nonlinear registration
 
-A linear transform cannot match *local* differences, such as larger ventricles or differently shaped sulci. A **nonlinear** registration moves each part of the image by a different amount, producing a smooth **warp field** instead of one matrix ([FNIRT overview](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FNIRT), [FNIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FNIRT/UserGuide)). FNIRT needs a FLIRT affine registration first, which is why Part 2 runs `flirt` first, then `fnirt`. The flexibility of non-linear transformations can sometimes go very wrong, so always check the result.
+A linear transform cannot match *local* differences, such as larger ventricles or differently shaped sulci. A **nonlinear** registration moves each part of the image by a different amount, producing a smooth **warp field** instead of one matrix ([FNIRT overview](https://fsl.fmrib.ox.ac.uk/fsl/docs/registration/fnirt/index.html)). FNIRT needs a FLIRT affine registration first, which is why Part 2 runs `flirt` first, then `fnirt`. The flexibility of non-linear transformations can sometimes go very wrong, so always check the result.
 
 ### Boundary-based registration (BBR)
 
-[BBR](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT_BBR) uses the **white-matter boundary** to align the EPI with the T1, where reliable intensity changes are expected in the functional image (outer gray-matter boundaries are less reliable). These intensity changes across tissue types can often allow for clearer markers of alignment than only the outline of the brain itself. The T1's white-matter boundary is mapped onto the EPI (usually with 6 DOF), and EPI intensities are sampled a short distance (2 mm by default) either side of it. The better the alignment, the more consistent the intensity change across the boundary between tissue types.
+[BBR](https://fsl.fmrib.ox.ac.uk/fsl/docs/registration/flirt/bbr.html) uses the **white-matter boundary** to align the EPI with the T1, where reliable intensity changes are expected in the functional image (outer gray-matter boundaries are less reliable). These intensity changes across tissue types can often allow for clearer markers of alignment than only the outline of the brain itself. The T1's white-matter boundary is mapped onto the EPI (usually with 6 DOF), and EPI intensities are sampled a short distance (2 mm by default) either side of it. The better the alignment, the more consistent the intensity change across the boundary between tissue types.
 
 The `epi_reg` script runs BBR, and also builds the white-matter segmentation if needed.
 
@@ -232,7 +232,7 @@ Put the following in `scripts/02_epi_to_t1.sh`.
 
 ### 1.1 Boundary-based registration with `epi_reg`
 
-Docs: [FLIRT BBR](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT_BBR) · [`epi_reg` in the FLIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT/UserGuide) · [FAST](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FAST)
+Docs: [FLIRT BBR](https://fsl.fmrib.ox.ac.uk/fsl/docs/registration/flirt/bbr.html) · [`epi_reg` in the FLIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/docs/registration/epi_reg.html) · [FAST](https://fsl.fmrib.ox.ac.uk/fsl/docs/structural/fast.html)
 
 `epi_reg` (1) does an initial 6-DOF alignment, (2) segments the T1 with FAST to find the white-matter boundary, and (3) refines the alignment with BBR (see Background).
 
@@ -267,18 +267,18 @@ fsleyes ${T1} \
 
 The white-matter segmentation `epi2t1_fast_wmseg` should be shown as a green outline (see Tip 4 in Part 4) and the EPI is shown in the reg/yellow/green scale. Try toggling the mask and EPI on and off and scroll around the brain1. Apply what you learned for inspecting EPI co-registration from the BrainSwipes tutorial: does the EPI line up with cortical folds, the ventricles, and the brain edge? Is there any dropout (and if so, where)?
 
-Bonus: compare this FSLeyes output against the fMRIPrep html summary for this same participant, looking at the "Alignment of functional and anatomical MRI data (coregistration)" tab. The registrations and displays are slightly different, but do they give you a similar sense of what the registration quality is? 
+Bonus: compare this FSLeyes output against the fMRIPrep html summary for this same participant `sub-01`, looking at the "Alignment of functional and anatomical MRI data (coregistration)" section. The registrations and displays are slightly different, but do they give you a similar sense of what the registration quality is? 
 
 
 ---
 
 ## Part 2: Register T1 → MNI152
 
-Now we move the subject's anatomy into a standard coordinate space so that results can be compared across subjects. Brains differ in size and shape, so we need a **nonlinear** transform. Put the following in `scripts/03_t1_to_mni.sh`.
+Now we move the subject's anatomy into a standard coordinate space so that results can be compared across subjects. Typicall we need a **nonlinear** transform for this to account for the fact that the size and shape of neuroanatomical features vary between people. Put the following in `scripts/03_t1_to_mni.sh`.
 
 > **Remember:** we use an MNI template here, but the template doesn't have to be MNI. The same `flirt` + `fnirt` approach works for any template; you would just swap the reference images (see the terminology note in the Background).
 
-Docs: [FLIRT](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT) · [FNIRT](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FNIRT) · [FNIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FNIRT/UserGuide)
+Docs: [FNIRT](https://fsl.fmrib.ox.ac.uk/fsl/docs/registration/fnirt/index.html) 
 
 ### 2.1 Linear registration (12 DOF)
 
@@ -295,12 +295,12 @@ flirt -in ${OUT}/T1_brain \
 
 ### 2.2 Nonlinear registration with `fnirt`
 
-For `fnirt`, use the **whole-head** T1 as input and the affine matrix as the starting point. The `T1_2_MNI152_2mm` config file sets sensible defaults (reference image, brain mask, warp resolution, etc.). Note, unlike `flirt`, `fnirt` typically takes in the T1 image before brain extraction has taken place (skull and other tissue can help guide the algorithm). This isn't the case with fMRIprep so you don't have to worry about this outside the scope of this practical. 
+For `fnirt`, use the **whole-head** T1 as input and the affine matrix as the starting point. Note, unlike `flirt`, `fnirt` typically takes in the T1 image before brain extraction has taken place (skull and other tissue can help guide the algorithm). This isn't the case with fMRIprep so you don't have to worry about this outside the scope of this practical. 
 
 ```bash
 fnirt --in=${T1} \
       --aff=${OUT}/t1_to_mni_affine.mat \
-      --config=T1_2_MNI152_2mm \
+      --config=T1_2_MNI152_2mm \ # FSL has made this config to set defaults
       --cout=${OUT}/t1_to_mni_warp \
       --iout=${OUT}/t1_to_mni_nonlin \
       --jout=${OUT}/t1_to_mni_jacobian \
@@ -327,7 +327,7 @@ fsleyes ${OUT}/t1_to_mni_affine ${OUT}/t1_to_mni_nonlin ${MNI_BRAIN}
 
 This should display the template MNI brain on the "top" layer, with the nonlinear (flirt + fnirt) and affine-only (flirt) registrations below. **Remember**, the nonlinear image isn't skull-stripped here (that's why it looks a bit different from the other two with skull and neck). 
 
-One great way to check the registration quality is to make sure the MNI image is selected, then slide the "Opacity" slider at the top back and forth. Does it look like the brain in the image directly underneath (the nonlinear flirt + flirt one) is well aligned, or does tissue seem to change shape between the two images? Now toggle the nonlinear image in the overlay list off and try the same toggling of the opacity looking at the MNI image against the affine flirt-only one. WHich one is better?
+One great way to check the registration quality is to make sure the MNI image is selected, then slide the "Opacity" slider at the top back and forth. Does it look like the brain in the image directly underneath (the nonlinear fnirt + flirt one) is well aligned, or does tissue seem to change shape between the two images? Now toggle the nonlinear image in the overlay list off and try the same toggling of the opacity looking at the MNI image against the affine flirt-only one. WHich one is better?
 
 More specifically, what does the affine step get right, and what mismatches remain (ventricles, cortical edge, cerebellum)? Where did `fnirt` improve things? 
 
@@ -335,9 +335,9 @@ More specifically, what does the affine step get right, and what mismatches rema
 
 ## Part 3: Combine the transforms and make your overlays
 
-Rather than resampling the EPI twice (EPI → T1, then T1 → MNI), which blurs the data twice, concatenate the transforms into one and interpolate **once** (fMRIPrep does the same). This minimizes the number of times we resample. Put the following in `scripts/04_combine.sh`.
+For fMRI analysis, the overall goal of the registration process is often to get all the EPI images into the same template space (e.g., MNI space). Rather than resampling the EPI twice (EPI → T1, then T1 → MNI), which blurs the data twice, concatenate the transforms into one and interpolate **once** (fMRIPrep does the same). This minimizes the number of times we resample. Put the following in `scripts/04_combine.sh`.
 
-Docs: `convertwarp`, `applywarp`, and `invwarp` are described in the [FNIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FNIRT/UserGuide); `convert_xfm` is in the [FLIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT/UserGuide).
+Docs: `convertwarp`, `applywarp`, and `invwarp` are described in the [FNIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/docs/registration/fnirt/user_guide.html); `convert_xfm` is in the [FLIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/docs/registration/flirt/user_guide.html).
 
 ```bash
 convertwarp --ref=${MNI} \
@@ -357,28 +357,27 @@ Check the end-to-end result:
 fsleyes ${MNI} ${OUT}/mean_func_in_mni -cm red-yellow -a 50 &
 ```
 
-**Questions to think about:** Why does the EPI → T1 matrix go in as `--premat` while the T1 → MNI transform goes in as `--warp1`? What would the drawback be if you applied the two transforms with two separate resampling steps?
+**Questions to think about:** What would the drawback be if you applied the two transforms with two separate resampling steps?
 
-### Make your final `slicer` overlays (these are your deliverable)
+### Make your final `slicer` overlays (you'll turn these in on Canvas)
 
 Now create the two static images you will submit. `slicer` draws the second image as red edges over the first. Put these in `scripts/05_qa.sh`:
 
 ```bash
-# T1 edges drawn over the registered EPI, all slices on one picture
+# T1 edges drawn over the registered EPI
 slicer ${OUT}/epi2t1 ${OUT}/T1_brain -s 2 -a ${OUT}/qa_epi2t1.png
 
 # MNI template edges drawn over the warped T1
 slicer ${OUT}/t1_to_mni_nonlin ${MNI_BRAIN} -s 2 -a ${OUT}/qa_t1_to_mni.png
 ```
 
-If it's helpful for examining registration quality, you can also skullstrip the warped T1 then use that as input to `slicer` for QA visualization
+Optionally, if it's helpful for examining registration quality, you can also skullstrip the warped T1 then use that as input to `slicer` for QA visualization
 
 ```bash
 bet ${OUT}/t1_to_mni_nonlin ${OUT}/t1_to_mni_nonlin_brain -R -f 0.4
 slicer ${OUT}/t1_to_mni_nonlin_brain ${MNI_BRAIN} -s 2 -a ${OUT}/qa_t1_brain_to_mni.png
 
 ```
-
 
 For a good EPI → T1 registration, the red T1 edges (especially at the gray/white boundary and ventricles) should follow the same boundaries in the EPI. Open the PNGs and judge them using what you learned in BrainSwipes; Part 4 has more tips on what to look for.
 
@@ -399,8 +398,6 @@ Thinking back to the BrainSwipes tutorials, visually QAing registration is proba
 
 **Connect this to Part A:** Based on what you learned from BrainSwipes, would these registrations Pass or Fail, and what evidence supports that?
 
-Docs: [FSLeyes user guide](https://open.win.ox.ac.uk/pages/fsl/fsleyes/fsleyes/userdoc/) · [`slicer` and other FSL visualisation tools](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Miscvis)
-
 ### Tip 1: Always check the raw outputs, not just the final result
 
 Check each stage of a pipeline separately (the initial alignment, the linear result, the nonlinear result). If the final result is wrong, you need to know where it went wrong.
@@ -411,11 +408,11 @@ In FSLeyes, load the reference image and the registered image, then repeatedly t
 
 ### Tip 3: Use the opacity slider and a contrasting colormap
 
-Set the registered image to a colormap such as `red-yellow`, set its opacity to ~50%, and place it over the reference. Boundaries that match will look consistent; misalignments will show as doubled edges.
+Set the registered image to a colormap such as `red-yellow`, set its opacity to ~50%, and place it over the reference. Adjust the opacity as needed so that you can visualize both sets of superimposed boundaries. Boundaries that match will look consistent; misalignments will show as doubled edges.
 
 ### Tip 4: Overlay edges or outlines (the gold-standard check)
 
-Outlining the *reference* anatomy on top of the *moving* image is much easier to judge than blended images. This is the same approach you saw in the BrainSwipes tutorials.
+Outlining the *reference* anatomy on top of the *warped* image is much easier to judge than blended images. This is the same approach you saw in the BrainSwipes tutorials.
 
 **With FSLeyes:** load the white-matter segmentation (`epi2t1_fast_wmseg`) over your registered EPI. In the overlay list, set its **Overlay type** to *3D/4D volume → Mask* (or *Label*) and switch to **outline** display, so the WM boundary is drawn on top of the EPI.
 
@@ -438,7 +435,9 @@ Don't just glance at one slice. Scroll through the **whole brain** in axial, cor
 
 ### Tip 7: Know what "good enough" looks like for EPI
 
-EPIs have **geometric distortion** (stretching/compression near air-tissue interfaces such as the frontal lobes and temporal poles) and **signal dropout**. Rigid registration cannot fix distortion. So a good EPI → T1 registration will still show *small* residual mismatches in frontal and inferior temporal regions. Large, brain-wide offsets are failures; small local mismatches are expected unless you also used a fieldmap.
+* EPIs have **geometric distortion** (stretching/compression near air-tissue interfaces such as the frontal lobes and temporal poles) and **signal dropout**. 
+* However, even images with significant signal dropout *can* be registered well (e.g., the rest of the brain is lined up well even if there are low-signal areas), although sometimes dropout can cause registratoin issues.
+* Rigid registration cannot fix distortion. So a good EPI → T1 registration will still show *small* residual mismatches in frontal and inferior temporal regions. Large, brain-wide offsets are failures; small local mismatches are expected unless you also used a fieldmap.
 
 ---
 
