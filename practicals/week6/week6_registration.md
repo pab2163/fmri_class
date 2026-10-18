@@ -19,7 +19,7 @@ Everything else in this document (BrainSwipes, the questions in each part, your 
 
 ---
 
-## Part A: Train Your Eye with BrainSwipes (do this first)
+## Part A: Train Your Eye with BrainSwipes
 
 First, it is important to develop skills to be able to visually check registrations, and differentiate good ones from bad ones. [BrainSwipes](https://brainswipes.us) is a crowdsourced quality-assessment web app for neuroimaging data: you look at an image and swipe left or right to mark it Pass or Fail. Large studies use it to screen registrations by eye, and you will use the same skills to check your own results later.
 
@@ -91,10 +91,6 @@ By the end of this assignment you should be able to:
 
 ## Background: Types of Registration
 
-A short primer. Follow the links for detail.
-
-**Key FSL docs:** [FLIRT](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT) · [FLIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT/UserGuide) · [FLIRT BBR](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT_BBR) · [FNIRT](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FNIRT) · [FNIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FNIRT/UserGuide)
-
 > ### Note: registration terminology
 >
 > The same steps go by different names depending on the software and paper you are reading:
@@ -111,7 +107,7 @@ A short primer. Follow the links for detail.
 
 ### Linear registration and degrees of freedom
 
-A **linear (affine)** registration applies one transformation, a single matrix, to the whole image. The **degrees of freedom (DOF)** are the number of independent parameters it may adjust. You set this with `flirt -dof` ([FLIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT/UserGuide)).
+A **linear (affine)** registration applies one transformation, a single matrix, to the whole image. The **degrees of freedom (DOF)** are the number of independent parameters it may adjust. You set this with `flirt -dof` ([FLIRT User Guide](https://fsl.fmrib.ox.ac.uk/fsl/docs/registration/flirt/user_guide.html)).
 
 | DOF | Allows | Use when |
 |-----|--------|----------|
@@ -158,7 +154,7 @@ fmri_class/
 
 ### Put your commands in scripts
 
-Rather than typing FSL commands one at a time, put them in bash scripts (in `scripts/`) so that you keep a record of exactly what you ran, and can fix a setting and re-run everything easily. 
+For this practical, rather than typing FSL commands one at a time, put them in bash scripts (in `scripts/`) so that you keep a record of exactly what you ran, and can fix a setting and re-run everything easily. 
 
 ### The config script
 
@@ -170,10 +166,10 @@ Create `scripts/config.sh`. Edit the first variable to match where your course f
 
 # --- EDIT THIS ---
 export COURSE_DIR=/users/yourname/documents/fmri_class   # your course folder
+export PRAC_DIR=${COURSE_DIR}/registration_practical # path to your registration practical in the course folder 
+export BIDS_DIR=${COURSE_DIR}/datasets/ds000114/rawdata # path to ds000114 BIDS data within the course folder
 
 # --- Derived paths (don't edit) ---
-export BIDS_DIR=${COURSE_DIR}/ds000114/rawdata
-export PRAC_DIR=${COURSE_DIR}/registration_practical
 export SUB=sub-01
 export SES=ses-test
 export T1=${BIDS_DIR}/${SUB}/${SES}/anat/${SUB}_${SES}_T1w.nii.gz
@@ -270,7 +266,10 @@ fsleyes ${T1} \
         ${OUT}/epi2t1_fast_wmseg -ot mask -o -mc 0 1 0 &
 ```
 
-(The white-matter segmentation `epi2t1_fast_wmseg` should be shown as an outline; see Tip 4 in Part 4.) Apply your Part A checklist: does the EPI line up with cortical folds, the ventricles, and the brain edge? 
+(The white-matter segmentation `epi2t1_fast_wmseg` should be shown as a green outline; see Tip 4 in Part 4.) and the EPI is shown in the reg/yellow/green scale. Try toggling the mask and EPI on and off and scroll around the brain1. Apply your Part A checklist: does the EPI line up with cortical folds, the ventricles, and the brain edge? Is there any dropout in the anterior part of the brain? 
+
+Bonus: compare this FSLeyes output against the fMRIPrep html summary for this same participant, looking at the "Alignment of functional and anatomical MRI data (coregistration)" tab. The registrations and displays are slightly different, but do they give you a similar sense of what the registration quality is? 
+
 
 ---
 
@@ -297,7 +296,7 @@ flirt -in ${OUT}/T1_brain \
 
 ### 2.2 Nonlinear registration with `fnirt`
 
-For `fnirt`, use the **whole-head** T1 as input and the affine matrix as the starting point. The `T1_2_MNI152_2mm` config file sets sensible defaults (reference image, brain mask, warp resolution, etc.).
+For `fnirt`, use the **whole-head** T1 as input and the affine matrix as the starting point. The `T1_2_MNI152_2mm` config file sets sensible defaults (reference image, brain mask, warp resolution, etc.). Note, unlike `flirt`, `fnirt` typically takes in the T1 image before brain extraction has taken place (skull and other tissue can help guide the algorithm). This isn't the case with fMRIprep so you don't have to worry about this outside the scope of this practical. 
 
 ```bash
 fnirt --in=${T1} \
@@ -321,14 +320,17 @@ Outputs:
 
 ### 2.3 Inspect
 
-Check the linear result first, then the nonlinear one:
+Check the registration by toggling the images on and off as in FSLeyes 
 
 ```bash
-fsleyes ${MNI_BRAIN} ${OUT}/t1_to_mni_affine -cm red-yellow -a 50 &
-fsleyes ${MNI} ${OUT}/t1_to_mni_nonlin -cm red-yellow -a 50 &
+fsleyes ${OUT}/t1_to_mni_affine ${OUT}/t1_to_mni_nonlin ${MNI_BRAIN} 
 ```
 
-What does the affine step get right, and what mismatches remain (ventricles, cortical edge, cerebellum)? Where did `fnirt` improve things? Also load the Jacobian map (display range 0–2): values of 1 mean no local volume change, below 1 means local shrinking, above 1 means local expansion. Do the largest changes make anatomical sense?
+This should display the template MNI brain on the "top" layer, with the nonlinear (flirt + fnirt) and affine-only (flirt) registrations below. **Remember**, the nonlinear image isn't skull-stripped here (that's why it looks a bit different from the other two with skull and neck). 
+
+One great way to check the registration quality is to make sure the MNI image is selected, then slide the "Opacity" slider at the top back and forth. Does it look like the brain in the image directly underneath (the nonlinear flirt + flirt one) is well aligned, or does tissue seem to change shape between the two images? Now toggle the nonlinear image in the overlay list off and try the same toggling of the opacity looking at the MNI image against the affine flirt-only one. WHich one is better?
+
+More specifically, what does the affine step get right, and what mismatches remain (ventricles, cortical edge, cerebellum)? Where did `fnirt` improve things? 
 
 ---
 
@@ -356,7 +358,7 @@ Check the end-to-end result:
 fsleyes ${MNI} ${OUT}/mean_func_in_mni -cm red-yellow -a 50 &
 ```
 
-**Think about it:** Why does the EPI → T1 matrix go in as `--premat` while the T1 → MNI transform goes in as `--warp1`? What would go wrong if you applied the two transforms with two separate resampling steps?
+**Questions to think about:** Why does the EPI → T1 matrix go in as `--premat` while the T1 → MNI transform goes in as `--warp1`? What would the drawback be if you applied the two transforms with two separate resampling steps?
 
 ### Make your final `slicer` overlays (these are your deliverable)
 
@@ -364,11 +366,20 @@ Now create the two static images you will submit. `slicer` draws the second imag
 
 ```bash
 # T1 edges drawn over the registered EPI, all slices on one picture
-slicer ${OUT}/epi2t1 ${T1} -s 2 -a ${OUT}/qa_epi2t1.png
+slicer ${OUT}/epi2t1 ${OUT}/T1_brain -s 2 -a ${OUT}/qa_epi2t1.png
 
 # MNI template edges drawn over the warped T1
-slicer ${OUT}/t1_to_mni_nonlin ${MNI} -s 2 -a ${OUT}/qa_t1_to_mni.png
+slicer ${OUT}/t1_to_mni_nonlin ${MNI_BRAIN} -s 2 -a ${OUT}/qa_t1_to_mni.png
 ```
+
+If it's helpful for examining registration quality, you can also skullstrip the warped T1 then use that as input to `slicer` for QA visualization
+
+```bash
+bet ${OUT}/t1_to_mni_nonlin ${OUT}/t1_to_mni_nonlin_brain -R -f 0.4
+slicer ${OUT}/t1_to_mni_nonlin_brain ${MNI_BRAIN} -s 2 -a ${OUT}/qa_t1_brain_to_mni.png
+
+```
+
 
 For a good EPI → T1 registration, the red T1 edges (especially at the gray/white boundary and ventricles) should follow the same boundaries in the EPI. Open the PNGs and judge them using what you learned in BrainSwipes; Part 4 has more tips on what to look for.
 
