@@ -4,6 +4,8 @@
 
 **Tools:** Docker (fMRIPrep image, for FSL's `mcflirt`), Python (numpy, pandas, matplotlib, nibabel), FSLeyes
 
+>Note: you don't have to write out answers to every question here. Just turn in a response to the last section (part 6) on Canvas
+
 ## Learning objectives
 
 By the end of this practical you should be able to:
@@ -321,10 +323,9 @@ fsleyes \
 ```
 
 1. In the **Overlay list**, the **top** image is displayed on top. Make sure the images have the **same display range** (same min and max brightness) so you're comparing like with like. You can set these in the display settings panel (the sliders button at the top).
-2. Change the colour map of the moco image to something that stands out (e.g. *Red-Yellow*), or just toggle the eye icon on and off to flick between them.
-3. Use the **Volume** control in the bottom toolbar to go to frames **55 to 62**.
-   - ⚠️ FSLeyes volume numbers are **0-indexed**, the same as in Python and in the `.par` file. So "frame 55" means volume number 55 in the box, which is **row 55** (the 56th row) of your `.par` file.
-4. For each frame in that range, look at one or two distinctive landmarks, for example the edge of the brain at the top of the cortex, the ventricles, the eyes, or the edge of the cerebellum. Place the crosshairs on the landmark and then step through frames.
+2. Use the **Volume** control in the bottom toolbar to go to frames **55 to 62**.
+   - FSLeyes volume numbers are **0-indexed**, the same as in Python and in the `.par` file. So "frame 55" means volume number 55 in the box, which is **row 55** (the 56th row) of your `.par` file.
+3. For each frame in that range, look at one or two distinctive landmarks, for example the edge of the brain at the top of the cortex, the ventricles, the eyes, or the edge of the cerebellum. Place the crosshairs on the landmark and then step through frames. Now toggle betwen the raw BOLD and the motion-corrected images, and see which one seems to show more visible motion. How obvious is the difference?
 
 ### Questions
 
@@ -418,4 +419,4 @@ Write a short (5-10 sentence) summary of the motion & motion correction in this 
 
 ### Submit on Canvas
 
-Your short written responses to the questions above as a single file
+Your short written responses to the questions in part 6 (wrap-up, conceptual) as a single file
