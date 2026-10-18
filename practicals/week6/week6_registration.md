@@ -73,7 +73,7 @@ By the end of this assignment you should be able to:
 
 - FSL installed
 - [FSLeyes](https://open.win.ox.ac.uk/pages/fsl/fsleyes/fsleyes/userdoc/) available (`fsleyes --version`)
-- Familiarity with BIDS layout and [`fslmaths`/`fslroi`](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Fslutils) and [`bet`](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/BET) from prior assignments
+- Familiarity with BIDS layout [`bet`](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/BET) from prior assignments
 - The `ds000114` BIDS dataset from prior assignments (`ds000114/rawdata`)
 
 > Note: you *can* use your fMRIPrep Docker image to run the FSL commands in this practical (the image includes FSL). Start a shell in the container with your course folder mounted **at the same path inside the container**, so the paths in your scripts work unchanged:
@@ -112,7 +112,7 @@ A **linear (affine)** registration applies one transformation, a single matrix, 
 | DOF | Allows | Use when |
 |-----|--------|----------|
 | **6** (rigid-body) | 3 translations + 3 rotations | Same brain, so no change in shape (EPI → T1) |
-| **12** (full affine) | Rigid body + 3 scalings + 3 shears | Different brains that differ in overall size and proportions (T1 → MNI) |
+| **12** (full affine) | Rigid body + 3 scalings (e.g. 'zooms') + 3 shears | Different brains that differ in overall size and proportions (T1 → MNI) |
 
 To get more of a visual feel for what affine transformations are, check out the [affine transformations animation from Andy's Brain Book](https://andysbrainbook.readthedocs.io/en/stable/fMRI_Short_Course/Preprocessing/Registration_Normalization.html#affine-transformations). Make sure to watch until the end to see the zoom & shear.
 
@@ -131,13 +131,15 @@ Note: fMRIPrep uses somewhat different defaults than what you'll do in this prac
 
 ---
 
-## Setup
+## Part B: Running Registrations Step-by-Step with FSL
 
-Use the **same ds000114 BIDS dataset as in previous assignments**. First, make a folder for this registration practical inside your course folder, with a `scripts` subfolder:
+Use the **same ds000114 BIDS dataset as in previous assignments**. You'll be first co-registering a BOLD run (the same oververt word repetition task as before) to the T1, then registering the T1 to the MNI template. 
+
+First, make a folder for this registration practical inside your course folder, with a `scripts` subfolder:
 
 ```bash
 mkdir -p /users/yourname/documents/fmri_class/registration_practical/scripts
-cd /users/yourname/documents/fmri_class/registration_practical
+cd /users/yourname/documents/fmri_class/registration_practical/scripts
 ```
 
 By the end, your folder will look like this:
@@ -149,7 +151,6 @@ fmri_class/
 └── registration_practical/
     ├── scripts/                     # all of your .sh scripts
     └── sub-01/                      # outputs from this practical
-        └── logs/
 ```
 
 ### Put your commands in scripts
@@ -177,8 +178,6 @@ export BOLD=${BIDS_DIR}/${SUB}/${SES}/func/${SUB}_${SES}_task-overtwordrepetitio
 export OUT=${PRAC_DIR}/${SUB}
 export MNI=${FSLDIR}/data/standard/MNI152_T1_2mm
 export MNI_BRAIN=${FSLDIR}/data/standard/MNI152_T1_2mm_brain
-
-mkdir -p ${OUT}/logs
 ```
 
 Load it in your terminal (for viewers and checks) and confirm your inputs exist:
@@ -191,7 +190,7 @@ fslinfo ${T1}
 fslinfo ${BOLD}
 ```
 
-You should see a T1 (`sub-01_ses-test_T1w.nii.gz`) and a BOLD file (`sub-01_ses-test_task-overtwordrepetition_bold.nii.gz`). If `ls` says a file is missing, check `COURSE_DIR` in `config.sh` first.
+You should see a T1 (`sub-01_ses-test_T1w.nii.gz`) and a BOLD file (`sub-01_ses-test_task-overtwordrepetition_bold.nii.gz`). If `ls` says a file is missing, check `COURSE_DIR` in `config.sh` first and make sure all the paths are correct. 
 
 ---
 
@@ -266,7 +265,7 @@ fsleyes ${T1} \
         ${OUT}/epi2t1_fast_wmseg -ot mask -o -mc 0 1 0 &
 ```
 
-(The white-matter segmentation `epi2t1_fast_wmseg` should be shown as a green outline; see Tip 4 in Part 4.) and the EPI is shown in the reg/yellow/green scale. Try toggling the mask and EPI on and off and scroll around the brain1. Apply your Part A checklist: does the EPI line up with cortical folds, the ventricles, and the brain edge? Is there any dropout in the anterior part of the brain? 
+The white-matter segmentation `epi2t1_fast_wmseg` should be shown as a green outline (see Tip 4 in Part 4) and the EPI is shown in the reg/yellow/green scale. Try toggling the mask and EPI on and off and scroll around the brain1. Apply what you learned for inspecting EPI co-registration from the BrainSwipes tutorial: does the EPI line up with cortical folds, the ventricles, and the brain edge? Is there any dropout (and if so, where)?
 
 Bonus: compare this FSLeyes output against the fMRIPrep html summary for this same participant, looking at the "Alignment of functional and anatomical MRI data (coregistration)" tab. The registrations and displays are slightly different, but do they give you a similar sense of what the registration quality is? 
 
