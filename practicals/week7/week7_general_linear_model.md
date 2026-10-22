@@ -52,7 +52,7 @@ onsets_A = [12, 40, 74, 96, 135, 162, 190, 224, 255, 288, 310, 331]   # Conditio
 onsets_B =  [25, 58, 86, 118, 148, 175, 210, 240, 270, 300, 322, 345]   # Condition B onsets (s): 12 events
 ```
 
-Now, update the times of onsets_B such that each onset is exactly 1.5 seconds after onsets_A (e.g., it would be `[13.5, 41.2, ...]`). Before running any code, what do you think will happen to your estimate of the contrast between A and B? Why?
+Now, update the times of onsets_B such that each onset is exactly 1.5 seconds after onsets_A (e.g., it would be `[13.5, 41.5, ...]`). Before running any code, what do you think will happen to your estimate of the contrast between A and B? Why?
 
 Now, re-run the jupyter notebook, and see for yourself. Remember to check all the plot showing the X matrix (e.g., regressors for A and B), the beta estiamtes for A and B from the GLM, and the contrast estimate.
 
