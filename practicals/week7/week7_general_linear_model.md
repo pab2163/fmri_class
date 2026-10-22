@@ -2,7 +2,7 @@
 
 The goal of this practical is to help you get comfortable with the key ideas of a general linear model, which is a core concept for analyzing task fMRI data. 
 
-This practical is centered around a jupyter notebook tutorial made by Tor Wager and Martin Lindquist. In general, it shows how we would fit a regression model to a single fMRI voxel to ask how that voxel's mean signal was different during two different task conditions (A vs. B; for example two different colors displaying on the screen during the scan).
+This practical is centered around a [jupyter notebook tutorial made by Tor Wager and Martin Lindquist](https://torwager.github.io/elements-of-fmri-tutorials/book/part4/labs/ch18-lab-python/). In general, it shows how we would fit a regression model to a single fMRI voxel to ask how that voxel's mean signal was different during two different task conditions (A vs. B; for example two different colors displaying on the screen during the scan).
 
 It *does* have some matrix math involved. Do your best to work through this and understand the key concepts, and see below for some places where the matrix math is translated into code that may be a little simpler to read. 
 
@@ -66,7 +66,7 @@ Now, run the script using your `fmri_class` conda environment and examine the ou
 
 Please submit responses to the following questions
 
-1. Inspect the `glm_lag_simulation.png`. There are 4 panels, each of which show an important aspect of the task design or GLM on the y-axis as a function of the lag between A & B onset times. Write an interpretation of what each respective panel tells us. If you were going to design this A vs. B task, which lag would you choose, and why? 
+1. Inspect the `glm_lag_simulation.png`. There are 4 panels, each of which show an important aspect of the task design or GLM estimate on the y-axis as a function of the lag between A & B onset times. Write an interpretation of what each respective panel tells us. If you were going to design this A vs. B task, which lag would you choose, and why? 
 
 2. What does it mean to *convolve* the stimulus regressors with the HRF? Why is this necessary?
 
