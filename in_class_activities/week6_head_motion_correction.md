@@ -318,7 +318,7 @@ Open FSLeyes with the raw and corrected images (run this on your own machine, no
 
 ```bash
 fsleyes \
-    $BIDS/$BOLD \
+    $BIDS/sub-01/ses-test/func/sub-01_ses-test_task-overtwordrepetition.nii.gz \
     $OUT/sub-01_ses-test_task-overtwordrepetition_moco.nii.gz &
 ```
 
