@@ -300,7 +300,7 @@ For `fnirt`, use the **whole-head** T1 as input and the affine matrix as the sta
 ```bash
 fnirt --in=${T1} \
       --aff=${OUT}/t1_to_mni_affine.mat \
-      --config=T1_2_MNI152_2mm \ # FSL has made this config to set defaults
+      --config=T1_2_MNI152_2mm \ 
       --cout=${OUT}/t1_to_mni_warp \
       --iout=${OUT}/t1_to_mni_nonlin \
       --jout=${OUT}/t1_to_mni_jacobian \
